@@ -46,6 +46,7 @@ storeLocator.Panel = function(el, opt_options) {
   this.settings_ = $.extend({
       'locationSearch': true,
       'locationSearchLabel': 'Where are you?',
+      'sidebarOffset': 300,
       'featureFilter': true,
       'directions': true,
       'view': null
@@ -113,6 +114,7 @@ storeLocator.Panel.prototype.init_ = function() {
       } else {
         map.setCenter(place.geometry.location);
         map.setZoom(13);
+        map.panBy(that.settings_['sidebarOffset'] * -1 || 0, 0);
       }
       sl.refreshView();
       that.listenForStoresUpdate_();
@@ -344,7 +346,7 @@ storeLocator.Panel.prototype.stores_changed = function() {
   };
 
   // TODO(cbro): change 10 to a setting/option
-  for (var i = 0, ii = Math.min(10, stores.length); i < ii; i++) {
+  for (var i = 0, ii = Math.min(50, stores.length); i < ii; i++) {
     var storeLi = stores[i].getInfoPanelItem();
     storeLi['store'] = stores[i];
     if (selectedStore && stores[i].getId() == selectedStore.getId()) {
@@ -382,11 +384,11 @@ storeLocator.Panel.prototype.selectedStore_changed = function() {
   }
 
   var node = that.get('view').getInfoWindow().getContent();
-  var directionsLink = $('<a/>')
-                          .text('Directions')
-                          .attr('href', '#')
-                          .addClass('action')
-                          .addClass('directions');
+  // var directionsLink = $('<a/>')
+  //                         .text('Directions')
+  //                         .attr('href', '#')
+  //                         .addClass('action')
+  //                         .addClass('directions');
 
   // TODO(cbro): Make these two permanent fixtures in InfoWindow.
   // Move out of Panel.
@@ -402,16 +404,17 @@ storeLocator.Panel.prototype.selectedStore_changed = function() {
                           .addClass('action')
                           .addClass('streetview');
 
-  directionsLink.click(function() {
-    that.showDirections();
-    return false;
-  });
+  // directionsLink.click(function() {
+  //   that.showDirections();
+  //   return false;
+  // });
 
   zoomLink.click(function() {
     that.get('view').getMap().setOptions({
       center: store.getLocation(),
       zoom: 16
     });
+    that.get('view').getMap().panBy(that.settings_['sidebarOffset'] * -1 || 0, 0);
   });
 
   streetViewLink.click(function() {
@@ -420,7 +423,8 @@ storeLocator.Panel.prototype.selectedStore_changed = function() {
     streetView.setVisible(true);
   });
 
-  $(node).append(directionsLink).append(zoomLink).append(streetViewLink);
+  // $(node).append(directionsLink).append(zoomLink).append(streetViewLink);
+  $(node).append(zoomLink).append(streetViewLink);
 };
 
 /**

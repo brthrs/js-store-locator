@@ -93,6 +93,7 @@ storeLocator.View = function(map, data, opt_options) {
   this.settings_ = $.extend({
       'updateOnPan': true,
       'geolocation': true,
+      'sidebarOffset': 300,
       'features': new storeLocator.FeatureSet
     }, opt_options);
 
@@ -117,6 +118,7 @@ storeLocator.View.prototype.geolocate_ = function() {
 
       that.getMap().setCenter(loc);
       that.getMap().setZoom(11);
+      that.getMap().panBy(that.settings_['sidebarOffset'] * -1 || 0, 0);
       google.maps.event.trigger(that, 'load');
     }, undefined, /** @type GeolocationPositionOptions */({
       maximumAge: 60 * 1000,
@@ -342,9 +344,11 @@ storeLocator.View.prototype.highlight = function(store, opt_pan) {
     }
     if (opt_pan) {
       this.getMap().panTo(store.getLocation());
+      this.getMap().panBy(this.settings_['sidebarOffset'] * -1 || 0, 0);
     }
     if (this.getMap().getStreetView().getVisible()) {
       this.getMap().getStreetView().setPosition(store.getLocation());
+
     }
   } else {
     infoWindow.close();
